@@ -34,9 +34,24 @@ pipeline {
                 label 'ubuntu-node'
             }
             steps {
-                echo "Running app on stagging env"
-                sh '''
+                     echo "Renaming java-tomcat-maven-example.war to ROOT.war..."
+        sh '''
+                 # Ensure the .war file exists in the current directory
+                if [ ! -f java-tomcat-maven-example.war ]; then
+                  echo "ERROR: java-tomcat-maven-example.war not found!"
+                exit 1
+                fi
                    mv java-tomcat-maven-example.war ROOT.war
+
+                      # Confirm the rename was successful
+        if [ ! -f ROOT.war ]; then
+          echo "ERROR: Failed to rename java-tomcat-maven-example.war to ROOT.war"
+          exit 1
+        fi
+        '''
+                        echo "Running app on Production environment..."
+        sh '''
+
                 docker stop tomcatInstanceStaging || true
                 docker rm tomcatInstanceStaging || true
                 docker run -itd --name tomcatInstanceStaging -p 8082:8080 localtomcatimg:$BUILD_NUMBER
