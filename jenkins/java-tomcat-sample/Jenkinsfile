@@ -29,43 +29,35 @@ pipeline {
                 sh '''
             }
         }
-        stage('Deploy Production Environment') {
-    agent {
-        label 'ubuntu-node'
-    }
-    steps {
-        timeout(time: 1, unit: 'DAYS') {
-            input message: 'Approve PRODUCTION Deployment?'
+        stage('Deploy to Stagging Env') {
+            agent {
+                label 'ubuntu-node'
+            }
+            steps {
+                echo "Running app on stagging env"
+                sh '''
+                docker stop tomcatInstanceStaging || true
+                docker rm tomcatInstanceStaging || true
+                docker run -itd --name tomcatInstanceStaging -p 8082:8080 localtomcatimg:$BUILD_NUMBER
+                sh '''
+            }
         }
-        echo "Renaming java-tomcat-maven-example.war to ROOT.war..."
-        sh '''
-        # Check if the .war file exists in the expected directory
-        if [ ! -f target/java-tomcat-maven-example.war ]; then
-          echo "ERROR: target/java-tomcat-maven-example.war not found!"
-          exit 1
-        fi
-
-        # Rename the .war file to ROOT.war
-        mv target/java-tomcat-maven-example.war target/ROOT.war
-
-        # Confirm the rename was successful
-        if [ ! -f target/ROOT.war ]; then
-          echo "ERROR: Failed to rename java-tomcat-maven-example.war to ROOT.war"
-          exit 1
-        fi
-        '''
-        echo "Running app on Production environment..."
-        sh '''
-        # Stop and remove the existing production container if it exists
-        docker stop tomcatInstanceProd || true
-        docker rm tomcatInstanceProd || true
-
-        # Deploy the renamed ROOT.war using the Tomcat container
-        docker run -itd --name tomcatInstanceProd -p 8083:8080 localtomcatimg:$BUILD_NUMBER
-        '''
-    }
-}
-
+        stage('Deploy Production Environment') {
+            agent {
+                label 'ubuntu-node'
+            }
+            steps {
+                timeout(time:1, unit:'DAYS'){
+                input message:'Approve PRODUCTION Deployment?'
+                }
+                echo "Running app on Prod env"
+                sh '''
+                docker stop tomcatInstanceProd || true
+                docker rm tomcatInstanceProd || true
+                docker run -itd --name tomcatInstanceProd -p 8083:8080 localtomcatimg:$BUILD_NUMBER
+                '''
+            }
+        }
     }
 
 
