@@ -52,6 +52,7 @@ pipeline {
                 }
                 echo "Running app on Prod env"
                 sh '''
+                 mv java-tomcat-maven-example.war ROOT.war
                 docker stop tomcatInstanceProd || true
                 docker rm tomcatInstanceProd || true
                 docker run -itd --name tomcatInstanceProd -p 8083:8080 localtomcatimg:$BUILD_NUMBER
@@ -59,7 +60,7 @@ pipeline {
             }
         }
     }
-
+  
 
 
 
