@@ -36,6 +36,7 @@ pipeline {
             steps {
                 echo "Running app on stagging env"
                 sh '''
+                   mv java-tomcat-maven-example.war ROOT.war
                 docker stop tomcatInstanceStaging || true
                 docker rm tomcatInstanceStaging || true
                 docker run -itd --name tomcatInstanceStaging -p 8082:8080 localtomcatimg:$BUILD_NUMBER
@@ -52,7 +53,7 @@ pipeline {
                 }
                 echo "Running app on Prod env"
                 sh '''
-                 mv java-tomcat-maven-example.war ROOT.war
+              
                 docker stop tomcatInstanceProd || true
                 docker rm tomcatInstanceProd || true
                 docker run -itd --name tomcatInstanceProd -p 8083:8080 localtomcatimg:$BUILD_NUMBER
