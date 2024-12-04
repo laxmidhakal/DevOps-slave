@@ -29,7 +29,7 @@ pipeline {
                 sh '''
                 original_pwd=$(pwd -P)
                 cd jenkins/java-tomcat-sample
-                docker build -t localtomcatimg:$BUILD_NUMBER .
+                docker build -t localtomcatimage:$BUILD_NUMBER .
                 cd $original_pwd
                 sh '''
             }
@@ -47,7 +47,7 @@ pipeline {
         }
         echo "Pushing Docker image to Docker Hub..."
         sh '''
-        docker tag localtomcatimg:$BUILD_NUMBER laxmidhakal/jenkin:$BUILD_NUMBER
+        docker tag localtomcatimage:$BUILD_NUMBER laxmidhakal/jenkin:$BUILD_NUMBER
         docker push laxmidhakal/jenkin:$BUILD_NUMBER
         '''
         
@@ -62,7 +62,9 @@ pipeline {
             steps {
                 echo "Running app on stagging env"
                 sh '''
-                 docker compose up -d
+                docker stop tomcatInstance || true
+                docker rm tomcatInstance || true
+                docker run -itd --name tomcatInstance -p 8082:8080 localtomcatimg:$BUILD_NUMBER
                 sh '''
             }
         }
