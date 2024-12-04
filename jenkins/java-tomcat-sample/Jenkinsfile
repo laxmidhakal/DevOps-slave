@@ -47,7 +47,8 @@ pipeline {
         }
         echo "Pushing Docker image to Docker Hub..."
         sh '''
-        docker push localtomcatimg:$BUILD_NUMBER
+        docker tag localtomcatimg:$BUILD_NUMBER laxmidhakal/localtomcatimg:$BUILD_NUMBER
+        docker push laxmidhakal/localtomcatimg:$BUILD_NUMBER
         '''
         
         }
