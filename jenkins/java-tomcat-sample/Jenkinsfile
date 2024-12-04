@@ -54,33 +54,20 @@ pipeline {
         }
     }
 
-        stage('Run Docker Compose') {
+
+        stage('Deploy to Stagging Env') {
+            agent {
+                label 'ubuntu-node'
+            }
             steps {
-                echo "Starting containers with Docker Compose..."
-                  dir('jenkins/java-tomcat-sample/docker-compose.yml') {
-        sh '''
-        # Replace the BUILD_NUMBER in docker-compose.yml
-        sed -i 's|${BUILD_NUMBER}|'$BUILD_NUMBER'|g' docker-compose.yml
-        docker-compose up -d
-        '''
-    }
+                echo "Running app on stagging env"
+                sh '''
+                docker stop tomcatInstance || true
+                docker rm tomcatInstance || true
+                docker run -itd --name tomcatInstance -p 8082:8080 localtomcatimage:$BUILD_NUMBER
+                sh '''
             }
         }
-
-
-        // stage('Deploy to Stagging Env') {
-        //     agent {
-        //         label 'ubuntu-node'
-        //     }
-        //     steps {
-        //         echo "Running app on stagging env"
-        //         sh '''
-        //         docker stop tomcatInstance || true
-        //         docker rm tomcatInstance || true
-        //         docker run -itd --name tomcatInstance -p 8082:8080 localtomcatimage:$BUILD_NUMBER
-        //         sh '''
-        //     }
-        // }
         // stage('Deploy Production Environment') {
         //     agent {
         //         label 'ubuntu-node'
