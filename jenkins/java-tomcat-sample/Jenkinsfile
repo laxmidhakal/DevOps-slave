@@ -59,11 +59,11 @@ pipeline {
                 script {
                     echo "Running Docker Compose to Start Containers..."
                     sh '''
-                    # Replace the BUILD_NUMBER in docker-compose.yml
-                    sed -i 's|${BUILD_NUMBER}|'$BUILD_NUMBER'|g' docker-compose.yml
+                    # Replace the BUILD_NUMBER in docker compose.yml
+                    sed -i 's|${BUILD_NUMBER}|'$BUILD_NUMBER'|g' docker compose.yml
 
                     # Start the containers in detached mode
-                    docker-compose up -d
+                    docker compose up -d
                     '''
                 }
             }
