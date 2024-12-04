@@ -54,34 +54,20 @@ pipeline {
         }
     }
 
-        stage('Run Docker Compose') {
-            steps {
-                script {
-                    echo "Running Docker Compose to Start Containers..."
-                    sh '''
-                    # Replace the BUILD_NUMBER in docker compose.yml
 
-                    # Start the containers in detached mode
-                    docker compose up -d
-                    '''
-                }
+        stage('Deploy to Stagging Env') {
+            agent {
+                label 'ubuntu-node'
+            }
+            steps {
+                echo "Running app on stagging env"
+                sh '''
+                docker stop tomcatInstance || true
+                docker rm tomcatInstance || true
+                docker run -itd --name tomcatInstance -p 8082:8080 localtomcatimage:$BUILD_NUMBER
+                sh '''
             }
         }
-
-
-        // stage('Deploy to Stagging Env') {
-        //     agent {
-        //         label 'ubuntu-node'
-        //     }
-        //     steps {
-        //         echo "Running app on stagging env"
-        //         sh '''
-        //         docker stop tomcatInstance || true
-        //         docker rm tomcatInstance || true
-        //         docker run -itd --name tomcatInstance -p 8082:8080 localtomcatimage:$BUILD_NUMBER
-        //         sh '''
-        //     }
-        // }
         // stage('Deploy Production Environment') {
         //     agent {
         //         label 'ubuntu-node'
