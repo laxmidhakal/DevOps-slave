@@ -57,11 +57,13 @@ pipeline {
         stage('Run Docker Compose') {
             steps {
                 echo "Starting containers with Docker Compose..."
-                    // Replace the BUILD_NUMBER in the docker-compose.yml file if needed
-                    sh '''
-                    sed -i 's|${BUILD_NUMBER}|'$BUILD_NUMBER'|g' docker-compose.yml
-                    docker-compose up -d
-                    '''
+                  dir('jenkins/java-tomcat-sample/docker-compose.yml') {
+        sh '''
+        # Replace the BUILD_NUMBER in docker-compose.yml
+        sed -i 's|${BUILD_NUMBER}|'$BUILD_NUMBER'|g' docker-compose.yml
+        docker-compose up -d
+        '''
+    }
             }
         }
 
