@@ -14,6 +14,17 @@ pipeline {
                 }
             }
         }
+
+        stage('Prepare WAR File') {
+            steps {
+                script {
+                    echo "Renaming WAR file to ROOT.war"
+                    sh '''
+                    mv target/java-tomcat-maven-example.war target/ROOT.war
+                    '''
+                }
+            }
+        }
         stage('Create Tomcat Image') {
             agent {
                 label 'ubuntu-node'
