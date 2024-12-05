@@ -56,6 +56,7 @@ pipeline {
 
         stage('Run Docker Compose') {
             steps {
+                 sh 'ls -l'
                 echo "Starting containers with Docker Compose..."
                     // Replace the BUILD_NUMBER in the docker-compose.yml file if needed
                     sh '''
