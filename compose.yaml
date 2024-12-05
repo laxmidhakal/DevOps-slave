@@ -1,7 +1,7 @@
 
 services:
   app:
-    image: laxmidhakal/localtomcatimage:${BUILD_NUMBER}
+    image: ${DOCKER_IMAGE}:${BUILD_NUMBER}
     container_name: app_container
     ports:
       - "8080:8080"
